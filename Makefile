@@ -3,22 +3,23 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+         #
+#    By: Watanudon <Watanudon@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 13:54:41 by lgottsch          #+#    #+#              #
-#    Updated: 2024/11/02 17:34:45 by lgottsch         ###   ########.fr        #
+#    Updated: 2024/11/04 19:58:11 by Watanudon        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 #call makefile from libft first
 #somehow make it all one program here
+
 NAME = pipex
 
 CC= cc
 CFLAGS= -Werror -Wall -Wextra
 
 
-SRC = pipex.c \
+SRC =  trypipe.c \
 		full_libft/full_libft.a
 
 OBJ = $(SRC:.c=.o)
@@ -30,7 +31,6 @@ $(NAME):
 	$(CC) $(CFLAGS) $(SRC)
 
 all: $(NAME)
-
 
 
 clean:
