@@ -1,34 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/01 17:10:31 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/11/05 19:19:35 by lgottsch         ###   ########.fr       */
+/*   Created: 2024/09/16 14:38:53 by lgottsch          #+#    #+#             */
+/*   Updated: 2024/11/02 14:39:27 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef PIPEX_H
-#define PIPEX_H
-
-#include <stdio.h>
-#include "./full_libft/full_libft.h"
-#include <sys/types.h> //fork
-#include <fcntl.h> //open
-
-//pipex.c
-void	forkto2(char *argv[]);
-void	kid2(fd0, fd1, char *argv[]);
-void	kid1(fd0, fd1, char *argv[]);
-int		check_input(char *argv[]);
+#include "../full_libft.h"
 
 
-//pipex_help.c
-void	exec_cmd(cmd1);
+void	ft_bzero(void *s, size_t n)
+{
+	unsigned char	*tmp;
 
-
-
-
-#endif
+	tmp = (unsigned char *)s;
+	while (n)
+	{
+		*tmp = '\0';
+		tmp++;
+		n--;
+	}
+}
+// #include <stdio.h>
+// int main (void)
+// {
+// 	char string[6] = "Hello!";
+// 	printf("%s\n", string);
+// 	ft_bzero(string, 0);
+// 	int i = 0;
+// 	while (i < 6)
+// 	{
+// 		printf("%c\n", string[i]);
+// 		i++;
+// 	}
+// }

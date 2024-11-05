@@ -15,7 +15,7 @@ ACHTUNG: KEIN ERROR CHECKING pipe, fork, read, write !!!!!!!!!
 */
 
 
-//try create and write and read from pipe
+//try create and write and read from pipe, try redirection
 
 int main (void)
 {
@@ -45,6 +45,7 @@ int main (void)
     {
         int len;
         char *buf;
+        int outfile;
 
         wait(NULL);
         close(fd[1]); //no need to write
@@ -54,8 +55,13 @@ int main (void)
         buf = (char *)malloc(sizeof(char) * len); //make space to read into
 
         read(fd[0], buf, len); //get str itself
+    
+        outfile = open("outfile", O_WRONLY); //redirect stdout to file
+        outfile = dup2(outfile, STDOUT_FILENO);
+
         ft_printf("buf: %s\n", buf);
         close(fd[0]); //finished reading 
+        close (outfile);
     }
     wait(NULL);
     return 0;

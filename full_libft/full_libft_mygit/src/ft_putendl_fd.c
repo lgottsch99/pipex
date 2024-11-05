@@ -1,34 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/01 17:10:31 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/11/05 19:19:35 by lgottsch         ###   ########.fr       */
+/*   Created: 2024/09/22 14:54:06 by lgottsch          #+#    #+#             */
+/*   Updated: 2024/11/02 14:41:41 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef PIPEX_H
-#define PIPEX_H
+#include "../full_libft.h"
 
-#include <stdio.h>
-#include "./full_libft/full_libft.h"
-#include <sys/types.h> //fork
-#include <fcntl.h> //open
+void	ft_putendl_fd(char *s, int fd)
+{
+	size_t	len;
+	size_t	i;
 
-//pipex.c
-void	forkto2(char *argv[]);
-void	kid2(fd0, fd1, char *argv[]);
-void	kid1(fd0, fd1, char *argv[]);
-int		check_input(char *argv[]);
+	len = ft_strlen(s);
+	i = 0;
+	while (i < len)
+	{
+		write(fd, &s[i], 1);
+		i++;
+	}
+	write(fd, "\n", 1);
+}
 
-
-//pipex_help.c
-void	exec_cmd(cmd1);
-
-
-
-
-#endif
+// int main (void)
+// {
+// 	char * s = "end!";
+// 	ft_putendl_fd(s, 1);
+// }

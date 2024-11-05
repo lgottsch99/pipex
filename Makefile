@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: Watanudon <Watanudon@student.42.fr>        +#+  +:+       +#+         #
+#    By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 13:54:41 by lgottsch          #+#    #+#              #
-#    Updated: 2024/11/04 19:58:11 by Watanudon        ###   ########.fr        #
+#    Updated: 2024/11/05 18:54:45 by lgottsch         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ CC= cc
 CFLAGS= -Werror -Wall -Wextra
 
 
-SRC =  trypipe.c \
+SRC =  pipex.c pipex_help.c\
 		full_libft/full_libft.a
 
 OBJ = $(SRC:.c=.o)

@@ -1,34 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/01 17:10:31 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/11/05 19:19:35 by lgottsch         ###   ########.fr       */
+/*   Created: 2024/09/16 16:11:53 by lgottsch          #+#    #+#             */
+/*   Updated: 2024/11/02 14:42:26 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef PIPEX_H
-#define PIPEX_H
+#include "../full_libft.h"
 
-#include <stdio.h>
-#include "./full_libft/full_libft.h"
-#include <sys/types.h> //fork
-#include <fcntl.h> //open
+size_t	ft_strlen(const char *s)
+{
+	int	i;
 
-//pipex.c
-void	forkto2(char *argv[]);
-void	kid2(fd0, fd1, char *argv[]);
-void	kid1(fd0, fd1, char *argv[]);
-int		check_input(char *argv[]);
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
 
-
-//pipex_help.c
-void	exec_cmd(cmd1);
-
-
-
-
-#endif
+// #include <stdio.h>
+// int main (void)
+// {
+// 	char *string = "";
+// 	int i = ft_strlen(string);
+// 	printf("%i\n", i);
+// }

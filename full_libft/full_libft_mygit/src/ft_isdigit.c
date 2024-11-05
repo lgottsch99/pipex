@@ -1,34 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_isdigit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/01 17:10:31 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/11/05 19:19:35 by lgottsch         ###   ########.fr       */
+/*   Created: 2024/09/16 15:46:24 by lgottsch          #+#    #+#             */
+/*   Updated: 2024/11/02 14:40:04 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef PIPEX_H
-#define PIPEX_H
-
-#include <stdio.h>
-#include "./full_libft/full_libft.h"
-#include <sys/types.h> //fork
-#include <fcntl.h> //open
-
-//pipex.c
-void	forkto2(char *argv[]);
-void	kid2(fd0, fd1, char *argv[]);
-void	kid1(fd0, fd1, char *argv[]);
-int		check_input(char *argv[]);
+#include "../full_libft.h"
 
 
-//pipex_help.c
-void	exec_cmd(cmd1);
-
-
-
-
-#endif
+int	ft_isdigit(int c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	else
+		return (0);
+}
+// #include <stdio.h>
+//  int main (void)
+//  {
+// 	int i = 48;
+// 	int y = ft_isdigit(i);
+// 	printf("%i\n", y);
+//  }
