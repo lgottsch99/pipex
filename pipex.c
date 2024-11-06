@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 13:54:06 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/11/05 19:19:38 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/11/06 18:00:27 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,14 @@
 
 /*
 ???
-when to pipe when to fork? 1 fork 2 pipe to connect 
-how many simultaneous processes needed? min 3: main, cmd1, cmd2
-
 need to check if shell commands exist?????
 
 TO DO:
 Try and play with og command, see what should happen
-check execve
+change execve: parsing for flags and creating array of str
+check error handling of og
+
+
 
 STRATEGY:
 -check if input correct, files accessible
@@ -57,26 +57,45 @@ int	check_input(char *argv[]) //checks if files are accessible/ exist, ret 0 if 
 	return (infile + outfile);
 }
 
-void	kid1(fd0, fd1, char *argv[]) //write exec 1 to pipe
+void	kid2(int fd0, int fd1, char *argv[]) //write exec 1 to pipe
 {
-	ftprintf("in ft kid 1\n");
+	ft_printf("in ft kid 2\n");
 
 	int infile;
 	int id;
+	int pipefile;
 	
 	close(fd0); //no need to read out
+	close (fd1); //testing only 
 	
 	if ((infile = open(argv[1], O_RDONLY)) == -1) //open infile
-		return 3;
-	ftprintf("infile opened\n");
+	{
+		ft_printf("error open infile\n");
+		return;
+	}
+	ft_printf("infile opened\n");
 
+///------------------------------here it continues in pipe
 		
-	if ((infile = dup2(infile, STDIN_FILENO)) == -1) //redirect infile to be stdin ??????needed?
-		return 4;
-	if ((dup2(fd1, STDOUT_FILENO)) == -1) //redirect input end of pipe to be stdout
-		return 5;
+	if ((pipefile = open("pipefile", O_WRONLY)) == -1) //testing only: write to pipefile instead of pipe
+	{
+		ft_printf("error open pipefile\n");
+		return;
+	}
 	
-	ftprintf("in/out redirected\n");
+	if ((infile = dup2(infile, STDIN_FILENO)) == -1) //redirect infile to be stdin ??????needed?
+	{
+		ft_printf("error dup2 stdin\n");
+		return;
+	}
+	close (infile);
+	if ((dup2(pipefile, STDOUT_FILENO)) == -1) //redirect input end of pipe to be stdout
+	{
+		ft_printf("error dup2 pipefile\n");
+		return;
+	}
+	ft_printf("in/out redirected\n"); //in pipe OK
+
 
 		
 	//exec cmd1 (will use infile as input????) 
@@ -84,49 +103,68 @@ void	kid1(fd0, fd1, char *argv[]) //write exec 1 to pipe
 	id = fork();
 	if (id == 0)
 	{	//in child for execv
-		ftprintf("in child for execv 1\n");
+		//ft_printf("in child for execv 1\n");  //in pipe OK
 
 		//TO DO : somehow execve
 		exec_cmd(argv[2]);
 	}
 	wait(NULL);
-	close (fd1);
+	//close (fd1);
 }
 
-void	kid2(fd0, fd1, char *argv[]) //read from pipe, exec 2, write output to outfile
+void	kid1(int fd0, int fd1, char *argv[]) //read from pipe, exec 2, write output to outfile
 {
-ftprintf("in ft kid 2\n");
+ft_printf("in ft kid 1\n");
 
 	int id;
 	int	outfile;
+	int pipefile;
 
 	close(fd1);
+	close(fd0);//for testing only 
 	
 	//open outfile
-	if (outfile = open(outfile, O_WRONLY) == -1)
-		return 7;
-	ftprintf("outfile opened\n");
+	if ((outfile = open(argv[4], O_WRONLY)) == -1)
+	{
+		ft_printf("error open outfile\n");
+		return;
+	}
+	//ft_printf("outfile opened\n");
+	if ((pipefile = open("pipefile", O_RDONLY)) == -1) //testing only!!!
+	{
+		ft_printf("error open pipefile\n");
+		return;
+	}
+
+	//--------------------here it goes to outfile
 
 	//redirect stdin to be read end pipe
-	if((dup2(fd0, STDIN_FILENO)) == -1)
-		return 6;
+	if((dup2(pipefile, STDIN_FILENO)) == -1)
+	{
+		ft_printf("error dup2 stdin\n");
+		return;
+	}
 	//redirect stdout to be outfile
 	if((dup2(outfile, STDOUT_FILENO)) == -1)
-		return 8;
+	{
+		ft_printf("error dup2 stdout\n");
+		return;
+	}
+	close(outfile);
 
-	ftprintf("in/out redirected\n");
+	ft_printf("in/out redirected\n");
 
 	//exec cmd2
 	id = fork();
 	if (id == 0)
 	{
-		ftprintf("in child for execv 2\n");
+		ft_printf("in child for execv 2\n");
 
 		//in child for execv
 		exec_cmd(argv[3]);
 	}
 	wait(NULL);
-	close(fd0);
+	//close(fd0);
 }
 
 void	forkto2(char *argv[]) //fork to 2 kids total, initialize pipe
@@ -134,33 +172,39 @@ void	forkto2(char *argv[]) //fork to 2 kids total, initialize pipe
 	int fd[2]; //fd[0] for read out , fd[1] for write in
 	int	id1;
 
-	ftprintf("in forkto2\n");
+	ft_printf("in forkto2\n");
 
 	if (pipe(fd) == -1)
-		return 2;
-		
+	{
+		ft_printf("error pipe\n");
+		return;
+	}
+
+			
 	id1 = fork();
 	if (id1 == 0) //in kid 1
 	{
-		ftprintf("in p kid 1\n");
+		ft_printf("in p kid 1\n");
 
 		int	id2;
 
 		id2 = fork();
 		if(id2 == 0) //in kid 2
 		{ //cmd 1 , write in pipe
-			ftprintf("in p kid 2\n");
+			ft_printf("in p kid 2\n");
 
-			kid1(fd[0], fd[1], argv);
+			kid2(fd[0], fd[1], argv);
 			
 		}
 		wait(NULL);
-		ftprintf("back in p kid 1\n");
+		ft_printf("back in p kid 1\n");
 
-		kid2(fd[0], fd[1], argv);
+		kid1(fd[0], fd[1], argv);
 	}
 	wait(NULL);
-	
+	ft_printf("back in p parent\n");
+
+	return;
 }
 
 //    ./pipex file1 cmd1 cmd2 file2
@@ -168,21 +212,22 @@ int main(int argc, char *argv[])
 {
 	if (argc == 5)
 	{
-		ftprintf("Correct no arguments\n");
+		ft_printf("Correct no arguments\n");
 
 		int check; 
 		
-		if ((check = check_input(argv)) != 0); //checks if files are accessible/ exist
+		if ((check = check_input(argv)) != 0) //checks if files are accessible/ exist
 			return 1; //special error?? CHECK OG shell behaviour
-		ftprintf("file permissions ok\n");
+		ft_printf("file permissions ok\n");
 
 		forkto2(argv);
 		
-	
+		ft_printf("back in main\n");
+
 	}
 	else
 	{
-		ftprintf("Not correct no arguments (should be 5)\n");
+		ft_printf("Not correct no arguments (should be 5)\n");
 		return 0;
 	}
 }

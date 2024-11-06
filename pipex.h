@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 17:10:31 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/11/05 19:19:35 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/11/06 15:41:03 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@
 
 //pipex.c
 void	forkto2(char *argv[]);
-void	kid2(fd0, fd1, char *argv[]);
-void	kid1(fd0, fd1, char *argv[]);
+void	kid2(int fd0, int fd1, char *argv[]);
+void	kid1(int fd0, int fd1, char *argv[]);
 int		check_input(char *argv[]);
 
 
 //pipex_help.c
-void	exec_cmd(cmd1);
+void	exec_cmd(char *cmd1);
 
 
 

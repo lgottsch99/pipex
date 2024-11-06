@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 18:46:53 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/11/05 19:19:39 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/11/06 17:26:18 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,24 @@
 
 //   ./pipex file1 cmd1 cmd2 file2
 
-void	exec_cmd(cmd) //already forked, redirected in/out inherited
+//for exec1 OK: if cmd path exists is executing and directing output to pipefile
+
+void	exec_cmd(char *cmd) //already forked, redirected in/out inherited
 {
-	ftprintf("in exec_cmd\n");
+	ft_printf("in exec_cmd\n");
 
 	char *pathname;
 	char *path;
-	char *argexe[2];
+	char *argexe[2]; //[0] should be command itself, [1] flags, [2] NULL
 
 	path = "/usr/bin/";
 
 	pathname = ft_strjoin(path, cmd);
 	ft_printf("joined path: %s\n", pathname);
 
-	argexe = {pathname, NULL};
-	execve(pathname, argv, NULL);
+	argexe[0] = pathname;
+	ft_printf("argexe array 0: %s\n", argexe[0]);
+	argexe[1] = NULL;
+	
+	execve(pathname, argexe, NULL);
 }

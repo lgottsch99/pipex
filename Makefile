@@ -6,7 +6,7 @@
 #    By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 13:54:41 by lgottsch          #+#    #+#              #
-#    Updated: 2024/11/05 18:54:45 by lgottsch         ###   ########.fr        #
+#    Updated: 2024/11/06 16:04:40 by lgottsch         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ fclean: clean
 	rm -f $(NAME)
 	@cd $(LIBFTDIR) && make clean
 
-re: fclean all
+re: fclean all 
 
 
 .PHONY: all clean fclean re
