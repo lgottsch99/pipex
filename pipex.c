@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 13:54:06 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/11/06 18:00:27 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/11/10 17:51:43 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,17 @@
 #include <sys/wait.h>
 #include <stdio.h>
 
+
 /*
 ???
-need to check if shell commands exist?????
+parsing for cmd flags
 
 TO DO:
 Try and play with og command, see what should happen
 change execve: parsing for flags and creating array of str
 check error handling of og
 
+OK handling output file
 
 
 STRATEGY:
@@ -30,6 +32,12 @@ STRATEGY:
 -fork to kid2 
 -in kid2: open infile, execve cmd1, write to pipe
 -in kid1: wait kid2 finished, read from pipe, use it to execve cmd 2, write output to outfile (NOT STDOUT)
+
+NOTES:
+stderr writes to terminal by default
+< is input redirection 
+> output redirection, out file is created if does not already exist / overwritten if exists!
+PATH holds all important paths 
 
 
 simulating |  https://www.youtube.com/watch?v=6xbLgZpOBi8&list=PLfqABt5AS4FkW5mOn2Tn9ZZLLDwA3kZUY&index=23
@@ -39,6 +47,7 @@ simulating |  https://www.youtube.com/watch?v=6xbLgZpOBi8&list=PLfqABt5AS4FkW5mO
 
 int	check_input(char *argv[]) //checks if files are accessible/ exist, ret 0 if ok, 1 if NOT ok
 {
+	//if infile does not exist, < will NOT create it -> error msg
 	int	infile;
 	int outfile;
 
@@ -49,15 +58,18 @@ int	check_input(char *argv[]) //checks if files are accessible/ exist, ret 0 if 
 		if (access(argv[1], R_OK) == 0)
 			infile = 0;
 	}
-	if (access(argv[4], F_OK) == 0) //file 2 exist and write
-	{
-		if(access(argv[4], W_OK) == 0)
-			outfile = 0;
-	}
-	return (infile + outfile);
+
+	
+	// if (access(argv[4], F_OK) == 0) //file 2 exist and write ?? check needed?
+	// {
+	// 	if(access(argv[4], W_OK) == 0)
+	// 		outfile = 0;
+	// }
+	//return (infile + outfile);
+	return (infile );
 }
 
-void	kid2(int fd0, int fd1, char *argv[]) //write exec 1 to pipe
+void	kid2(int fd0, int fd1, char *argv[], char *envp[]) //write exec 1 to pipe
 {
 	ft_printf("in ft kid 2\n");
 
@@ -106,13 +118,13 @@ void	kid2(int fd0, int fd1, char *argv[]) //write exec 1 to pipe
 		//ft_printf("in child for execv 1\n");  //in pipe OK
 
 		//TO DO : somehow execve
-		exec_cmd(argv[2]);
+		exec_cmd(argv[2], envp);
 	}
 	wait(NULL);
 	//close (fd1);
 }
 
-void	kid1(int fd0, int fd1, char *argv[]) //read from pipe, exec 2, write output to outfile
+void	kid1(int fd0, int fd1, char *argv[], char *envp[]) //read from pipe, exec 2, write output to outfile
 {
 ft_printf("in ft kid 1\n");
 
@@ -124,7 +136,7 @@ ft_printf("in ft kid 1\n");
 	close(fd0);//for testing only 
 	
 	//open outfile
-	if ((outfile = open(argv[4], O_WRONLY)) == -1)
+	if ((outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR|S_IWUSR)) == -1) //create if does  not exist, overwrite if exists?
 	{
 		ft_printf("error open outfile\n");
 		return;
@@ -161,13 +173,13 @@ ft_printf("in ft kid 1\n");
 		ft_printf("in child for execv 2\n");
 
 		//in child for execv
-		exec_cmd(argv[3]);
+		exec_cmd(argv[3], envp);
 	}
 	wait(NULL);
 	//close(fd0);
 }
 
-void	forkto2(char *argv[]) //fork to 2 kids total, initialize pipe
+void	forkto2(char *argv[], char *envp[]) //fork to 2 kids total, initialize pipe
 {
 	int fd[2]; //fd[0] for read out , fd[1] for write in
 	int	id1;
@@ -193,13 +205,13 @@ void	forkto2(char *argv[]) //fork to 2 kids total, initialize pipe
 		{ //cmd 1 , write in pipe
 			ft_printf("in p kid 2\n");
 
-			kid2(fd[0], fd[1], argv);
+			kid2(fd[0], fd[1], argv, envp);
 			
 		}
 		wait(NULL);
 		ft_printf("back in p kid 1\n");
 
-		kid1(fd[0], fd[1], argv);
+		kid1(fd[0], fd[1], argv, envp);
 	}
 	wait(NULL);
 	ft_printf("back in p parent\n");
@@ -208,19 +220,19 @@ void	forkto2(char *argv[]) //fork to 2 kids total, initialize pipe
 }
 
 //    ./pipex file1 cmd1 cmd2 file2
-int main(int argc, char *argv[])
+int main(int argc, char *argv[], char *envp[])
 {
 	if (argc == 5)
 	{
 		ft_printf("Correct no arguments\n");
 
-		int check; 
+		int check;
 		
 		if ((check = check_input(argv)) != 0) //checks if files are accessible/ exist
 			return 1; //special error?? CHECK OG shell behaviour
 		ft_printf("file permissions ok\n");
 
-		forkto2(argv);
+		forkto2(argv, envp);
 		
 		ft_printf("back in main\n");
 
@@ -228,6 +240,6 @@ int main(int argc, char *argv[])
 	else
 	{
 		ft_printf("Not correct no arguments (should be 5)\n");
-		return 0;
+		return 0; //??
 	}
 }

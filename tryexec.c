@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 			//bsp: ls - l 
 			char *pathname = "/usr/bin/";
 			char *cmd1 = argv[1];
+			
 			pathname = ft_strjoin(pathname, cmd1);
 			ft_printf("%s\n", pathname);
 			char *argv[]= {pathname, NULL};

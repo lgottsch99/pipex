@@ -1,1 +1,47 @@
-
+in/out redirected
+in exec_cmd
+index flags: 2
+index flags: 2
+flags in getflags:-l
+index flags: 2
+realcmd: ls
+MAIL=lgottsch@student.42prague.com
+USER=lgottsch
+XDG_SESSION_TYPE=x11
+SHLVL=2
+HOME=/nfs/homes/lgottsch
+OLDPWD=/nfs/homes/lgottsch/core/pipex/pipex_mygit
+DESKTOP_SESSION=ubuntu
+GTK_MODULES=gail:atk-bridge
+XDG_SEAT_PATH=/org/freedesktop/DisplayManager/Seat0
+SYSTEMD_EXEC_PID=1433330
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/101955/bus,guid=e639ef865cf1c4b90e3d63bb673080f7
+DBUS_STARTER_BUS_TYPE=session
+LIBVIRT_DEFAULT_URI=qemu:///system
+COLORTERM=truecolor
+GTK_IM_MODULE=ibus
+LOGNAME=lgottsch
+_=/nfs/homes/lgottsch/core/pipex/pipex_mygit/./a.out
+XDG_SESSION_CLASS=user
+TERM=xterm-256color
+GNOME_DESKTOP_SESSION_ID=this-is-deprecated
+PATH=/nfs/homes/lgottsch/bin:/nfs/homes/lgottsch/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+path found
+/nfs/homes/lgottsch/bin:/nfs/homes/lgottsch/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+joined: /nfs/homes/lgottsch/bin/ls -l
+joined: /nfs/homes/lgottsch/bin/ls -l
+joined: /usr/local/sbin/ls -l
+joined: /usr/local/bin/ls -l
+joined: /usr/sbin/ls -l
+joined: /usr/bin/ls -l
+joined: /sbin/ls -l
+joined: /bin/ls -l
+joined: /usr/games/ls -l
+joined: /usr/local/games/ls -l
+joined: /snap/bin/ls -l
+no exec
+executable path: (null)
+back in p kid 1
+in ft kid 1
+back in p kid 1
+in ft kid 1
