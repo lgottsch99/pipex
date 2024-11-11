@@ -1,0 +1,9 @@
+in/out redirected
+in child for execv 2
+in exec_cmd, cmd: wc
+path found
+path: /nfs/homes/lgottsch/bin:/nfs/homes/lgottsch/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+executable path: /usr/bin/wc
+     27     173    1261
+back in p parent
+back in main

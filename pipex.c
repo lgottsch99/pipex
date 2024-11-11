@@ -6,26 +6,22 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 13:54:06 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/11/10 17:51:43 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/11/11 19:02:12 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-#include <sys/wait.h>
+
 #include <stdio.h>
 
 
 /*
 ???
-parsing for cmd flags
 
 TO DO:
 Try and play with og command, see what should happen
-change execve: parsing for flags and creating array of str
-check error handling of og
-
-OK handling output file
-
+check error handling of og (va file permissions, infile and cmd) use chmod to create files 
+use perror
 
 STRATEGY:
 -check if input correct, files accessible
@@ -38,7 +34,6 @@ stderr writes to terminal by default
 < is input redirection 
 > output redirection, out file is created if does not already exist / overwritten if exists!
 PATH holds all important paths 
-
 
 simulating |  https://www.youtube.com/watch?v=6xbLgZpOBi8&list=PLfqABt5AS4FkW5mOn2Tn9ZZLLDwA3kZUY&index=23
 
@@ -58,15 +53,7 @@ int	check_input(char *argv[]) //checks if files are accessible/ exist, ret 0 if 
 		if (access(argv[1], R_OK) == 0)
 			infile = 0;
 	}
-
-	
-	// if (access(argv[4], F_OK) == 0) //file 2 exist and write ?? check needed?
-	// {
-	// 	if(access(argv[4], W_OK) == 0)
-	// 		outfile = 0;
-	// }
-	//return (infile + outfile);
-	return (infile );
+	return (infile);
 }
 
 void	kid2(int fd0, int fd1, char *argv[], char *envp[]) //write exec 1 to pipe
@@ -75,10 +62,10 @@ void	kid2(int fd0, int fd1, char *argv[], char *envp[]) //write exec 1 to pipe
 
 	int infile;
 	int id;
-	int pipefile;
+	//int pipefile;
 	
 	close(fd0); //no need to read out
-	close (fd1); //testing only 
+	//close (fd1); //testing only 
 	
 	if ((infile = open(argv[1], O_RDONLY)) == -1) //open infile
 	{
@@ -89,51 +76,50 @@ void	kid2(int fd0, int fd1, char *argv[], char *envp[]) //write exec 1 to pipe
 
 ///------------------------------here it continues in pipe
 		
-	if ((pipefile = open("pipefile", O_WRONLY)) == -1) //testing only: write to pipefile instead of pipe
-	{
-		ft_printf("error open pipefile\n");
-		return;
-	}
-	
-	if ((infile = dup2(infile, STDIN_FILENO)) == -1) //redirect infile to be stdin ??????needed?
+	// if ((pipefile = open("pipefile", O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR|S_IWUSR)) == -1) //testing only: write to pipefile instead of pipe
+	// {
+	// 	ft_printf("error open pipefile\n");
+	// 	return;
+	// }
+
+	if ((dup2(infile, STDIN_FILENO)) == -1) //redirect infile to be stdin 
 	{
 		ft_printf("error dup2 stdin\n");
 		return;
 	}
-	close (infile);
-	if ((dup2(pipefile, STDOUT_FILENO)) == -1) //redirect input end of pipe to be stdout
+	
+	if ((dup2(fd1, STDOUT_FILENO)) == -1) //redirect input end of pipe to be stdout
 	{
 		ft_printf("error dup2 pipefile\n");
 		return;
 	}
 	ft_printf("in/out redirected\n"); //in pipe OK
 
-
+	close (infile);
 		
-	//exec cmd1 (will use infile as input????) 
 	//---- fork again! otherwise kid1 process gone
 	id = fork();
 	if (id == 0)
 	{	//in child for execv
-		//ft_printf("in child for execv 1\n");  //in pipe OK
+		ft_printf("in child for execv 1\n");  //in pipe OK
 
 		//TO DO : somehow execve
 		exec_cmd(argv[2], envp);
 	}
 	wait(NULL);
-	//close (fd1);
+	close (fd1);
 }
 
 void	kid1(int fd0, int fd1, char *argv[], char *envp[]) //read from pipe, exec 2, write output to outfile
 {
-ft_printf("in ft kid 1\n");
+	ft_printf("in ft kid 1\n");
 
 	int id;
 	int	outfile;
-	int pipefile;
+	//int pipefile;
 
 	close(fd1);
-	close(fd0);//for testing only 
+	//close(fd0);//for testing only 
 	
 	//open outfile
 	if ((outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR|S_IWUSR)) == -1) //create if does  not exist, overwrite if exists?
@@ -141,17 +127,17 @@ ft_printf("in ft kid 1\n");
 		ft_printf("error open outfile\n");
 		return;
 	}
-	//ft_printf("outfile opened\n");
-	if ((pipefile = open("pipefile", O_RDONLY)) == -1) //testing only!!!
-	{
-		ft_printf("error open pipefile\n");
-		return;
-	}
+	ft_printf("outfile opened\n");
+	// if ((pipefile = open("pipefile", O_RDONLY)) == -1) //testing only!!!
+	// {
+	// 	ft_printf("error open pipefile\n");
+	// 	return;
+	// }
 
 	//--------------------here it goes to outfile
 
 	//redirect stdin to be read end pipe
-	if((dup2(pipefile, STDIN_FILENO)) == -1)
+	if((dup2(fd0, STDIN_FILENO)) == -1)
 	{
 		ft_printf("error dup2 stdin\n");
 		return;
@@ -172,17 +158,18 @@ ft_printf("in ft kid 1\n");
 	{
 		ft_printf("in child for execv 2\n");
 
-		//in child for execv
 		exec_cmd(argv[3], envp);
 	}
 	wait(NULL);
-	//close(fd0);
+	close(fd0);
 }
 
 void	forkto2(char *argv[], char *envp[]) //fork to 2 kids total, initialize pipe
 {
 	int fd[2]; //fd[0] for read out , fd[1] for write in
 	int	id1;
+	int id2;
+	int status;
 
 	ft_printf("in forkto2\n");
 
@@ -191,29 +178,28 @@ void	forkto2(char *argv[], char *envp[]) //fork to 2 kids total, initialize pipe
 		ft_printf("error pipe\n");
 		return;
 	}
-
-			
+	
 	id1 = fork();
-	if (id1 == 0) //in kid 1
+	if (id1 == 0) //in kid 2
 	{
-		ft_printf("in p kid 1\n");
+		ft_printf("in p kid 2\n");
 
-		int	id2;
-
-		id2 = fork();
-		if(id2 == 0) //in kid 2
-		{ //cmd 1 , write in pipe
-			ft_printf("in p kid 2\n");
-
-			kid2(fd[0], fd[1], argv, envp);
-			
-		}
-		wait(NULL);
-		ft_printf("back in p kid 1\n");
-
-		kid1(fd[0], fd[1], argv, envp);
+		kid2(fd[0], fd[1], argv, envp);
 	}
-	wait(NULL);
+	id2 = fork();
+	if(id2 == 0) //in kid 2
+	{ 
+		ft_printf("in p kid 1\n");	
+		
+		kid1(fd[0], fd[1], argv, envp);	
+	}
+
+	close(fd[0]);
+	close(fd[1]);	
+	waitpid(id1, &status, 0);
+	waitpid(id2, &status, 0);
+
+	
 	ft_printf("back in p parent\n");
 
 	return;
@@ -235,7 +221,7 @@ int main(int argc, char *argv[], char *envp[])
 		forkto2(argv, envp);
 		
 		ft_printf("back in main\n");
-
+		return (0);
 	}
 	else
 	{

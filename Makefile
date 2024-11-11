@@ -6,7 +6,7 @@
 #    By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 13:54:41 by lgottsch          #+#    #+#              #
-#    Updated: 2024/11/06 16:04:40 by lgottsch         ###   ########.fr        #
+#    Updated: 2024/11/11 18:58:18 by lgottsch         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ LIBFTDIR= ./full_libft
 
 $(NAME): 
 	@make -C full_libft
-	$(CC) $(CFLAGS) $(SRC)
+	$(CC) $(CFLAGS) $(SRC) -o pipex
 
 all: $(NAME)
 
